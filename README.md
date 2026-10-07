@@ -1,6 +1,8 @@
 # FRAME — LUTy a foto presety
 
-Česká webová aplikace: Vite + React, statický frontend na Netlify, Supabase Auth a PostgreSQL. Soubory zůstávají na Google Drive. Bez konfigurace aplikace zobrazuje označenou ukázku se šesti položkami; registrace, hodnocení a stahování v ukázce nejsou aktivní.
+Anglická webová aplikace pro tvůrce z celého světa: Vite + React, statický frontend na Netlify, Supabase Auth a PostgreSQL. Soubory zůstávají na Google Drive. Bez konfigurace aplikace zobrazuje označenou ukázku se šesti položkami; registrace, hodnocení a stahování v ukázce nejsou aktivní.
+
+Rozhraní, administrace, hlášky i ukázkové popisy jsou anglicky. Kategorie se zobrazují jako Cinematic, Nature, Lifestyle, Travel a Vintage; jejich původní databázové hodnoty zůstávají zachované, takže není potřeba SQL migrace. Vlastní názvy a popisy již uložené v Supabase přelož přes Admin → Edit. Texty e-mailů spravuje Supabase mimo tento projekt.
 
 ## Lokální spuštění
 
