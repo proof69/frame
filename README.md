@@ -22,9 +22,10 @@ V PowerShellu místo `cp` můžeš použít `Copy-Item .env.example .env.local`.
 2. V Project Settings → API zkopíruj URL a veřejný publishable key do `.env.local` jako `VITE_SUPABASE_URL` a `VITE_SUPABASE_PUBLISHABLE_KEY`. Nikdy sem nedávej secret nebo service_role klíč. Po změně restartuj Vite.
 3. V Authentication zapni Email provider a potvrzení e-mailu. Nastav minimálně osm znaků hesla. V URL Configuration nastav Site URL na adresu webu a mezi Redirect URLs přidej `http://localhost:5173` i přesnou produkční adresu Netlify.
 4. V Table Editoru přidej do `assets` své položky: název, typ `lut` nebo `preset`, kategorii, popis, formát, podporované aplikace, HTTPS adresu náhledu a `download_url` z Google Drive. Kategorie: Filmové, Příroda, Lifestyle, Cestování, Vintage. Vzor odkazu: `https://drive.google.com/file/d/ID_SOUBORU/view`.
-5. U souboru v Google Drive zapni sdílení pro každého s odkazem. Ověř odkaz v anonymním okně. Odkaz lze po stažení sdílet dál; přihlášení chrání katalog v databázi, veřejný soubor na Drive tím soukromý nebude.
+5. U souboru v Google Drive zapni sdílení pro každého s odkazem. Ověř odkaz v anonymním okně. Odkaz lze po stažení sdílet dál; přihlášení chrání vydání odkazu v aplikaci, veřejný soubor na Drive tím soukromý nebude.
+6. Pro veřejný katalog spusť v SQL Editoru `supabase/public-catalog.sql`. V existujícím projektu spusť pouze tuto migraci, původní `schema.sql` znovu nespouštěj. Migraci lze bezpečně opakovat. Katalog a detaily pak uvidí každý; stažení, hodnocení a komentáře vyžadují přihlášení.
 
-Obsah katalogu spravuje admin přímo na webu nebo přes Supabase Table Editor. Běžní uživatelé nemají oprávnění katalog měnit. Hodnocení je jedno na uživatele a položku, lze ho změnit. Komentáře mají limit 2000 znaků a autor je může smazat. Veřejné profily obsahují pouze zobrazované jméno. Nepřihlášený návštěvník nemůže číst katalog, komentáře ani hodnocení, ani přímo přes API.
+Obsah katalogu spravuje admin přímo na webu nebo přes Supabase Table Editor. Běžní uživatelé nemají oprávnění katalog měnit. Hodnocení je jedno na uživatele a položku, lze ho změnit. Komentáře mají limit 2000 znaků a autor je může smazat. Profily obsahují pouze zobrazované jméno. Nepřihlášený návštěvník může číst náhledy a metadata katalogu. Sloupec `download_url`, profily, komentáře a hodnocení jsou dostupné pouze přihlášeným. Veřejný klient vybírá konkrétní povolené sloupce; dotaz `select *` nemá oprávnění.
 
 ## Administrace
 
@@ -43,7 +44,7 @@ on conflict do nothing;
 
 Role jsou uložené v chráněné tabulce. Uživatel si nemůže admin oprávnění přidělit přes registraci ani API. Zápisy do katalogu ověřují databázové RLS politiky při každé operaci. Bez migrace `admin.sql` zůstane katalog funkční, tlačítko administrace se neobjeví.
 
-`npm test` ověřuje migraci v lokálním PostgreSQL přes PGlite: admin zápisy, zákaz změn pro běžného uživatele, zákaz přidělení vlastní role, okamžité odebrání oprávnění a smazání souvisejících komentářů a hodnocení. Nepřipojuje se k produkční databázi.
+`npm test` ověřuje migrace v lokálním PostgreSQL přes PGlite: veřejné čtení katalogu bez odkazu ke stažení, zákaz anonymních zápisů a čtení chráněných dat, admin zápisy, zákaz změn pro běžného uživatele, zákaz přidělení vlastní role, okamžité odebrání oprávnění a smazání souvisejících komentářů a hodnocení. Nepřipojuje se k produkční databázi.
 
 ## Netlify
 
@@ -54,7 +55,7 @@ Role jsou uložené v chráněné tabulce. Uživatel si nemůže admin oprávně
 
 ## Kontrola oprávnění před spuštěním
 
-Vytvoř dva testovací účty. První přidá hodnocení a komentář. Druhý je vidí, ale API musí odmítnout změnu cizího hodnocení i smazání cizího komentáře. Odhlášený klient nesmí přečíst `assets`. Tyto scénáře ověřují RLS, samotný frontend není bezpečnostní hranice.
+Vytvoř dva testovací účty. První přidá hodnocení a komentář. Druhý je vidí, ale API musí odmítnout změnu cizího hodnocení i smazání cizího komentáře. V anonymním okně ověř katalog, detail a tlačítko **Sign in to download**. Odhlášený klient může přečíst pouze veřejné sloupce `assets`, nikdy `download_url`. Po přihlášení ze stránky detailu se vrátíš ke stejné položce. Tyto scénáře ověřují oprávnění databáze; samotný frontend není bezpečnostní hranice.
 
 Hotový základ zatím neobsahuje nahrávání souborů, moderaci, obnovu zapomenutého hesla ani placené položky. Skutečné LUTy/presety a jejich licence musí dodat správce. Ukázkové fotografie načítá Unsplash a fonty Google Fonts.
 
