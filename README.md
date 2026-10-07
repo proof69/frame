@@ -22,7 +22,26 @@ V PowerShellu místo `cp` můžeš použít `Copy-Item .env.example .env.local`.
 4. V Table Editoru přidej do `assets` své položky: název, typ `lut` nebo `preset`, kategorii, popis, formát, podporované aplikace, HTTPS adresu náhledu a `download_url` z Google Drive. Kategorie: Filmové, Příroda, Lifestyle, Cestování, Vintage. Vzor odkazu: `https://drive.google.com/file/d/ID_SOUBORU/view`.
 5. U souboru v Google Drive zapni sdílení pro každého s odkazem. Ověř odkaz v anonymním okně. Odkaz lze po stažení sdílet dál; přihlášení chrání katalog v databázi, veřejný soubor na Drive tím soukromý nebude.
 
-Obsah katalogu spravuješ zatím v Supabase Table Editoru. Uživatelé nemají oprávnění katalog měnit. Hodnocení je jedno na uživatele a položku, lze ho změnit. Komentáře mají limit 2000 znaků a autor je může smazat. Veřejné profily obsahují pouze zobrazované jméno. Nepřihlášený návštěvník nemůže číst katalog, komentáře ani hodnocení, ani přímo přes API.
+Obsah katalogu spravuje admin přímo na webu nebo přes Supabase Table Editor. Běžní uživatelé nemají oprávnění katalog měnit. Hodnocení je jedno na uživatele a položku, lze ho změnit. Komentáře mají limit 2000 znaků a autor je může smazat. Veřejné profily obsahují pouze zobrazované jméno. Nepřihlášený návštěvník nemůže číst katalog, komentáře ani hodnocení, ani přímo přes API.
+
+## Administrace
+
+1. V existujícím Supabase projektu spusť v SQL Editoru celý `supabase/admin.sql`. Původní `schema.sql` znovu nespouštěj. U nového projektu nejdřív spusť `schema.sql`, potom `admin.sql`.
+2. Zaregistruj svůj účet na webu a potvrď e-mail. V SQL Editoru spusť následující dotaz s e-mailem tohoto účtu:
+
+```sql
+insert into public.admin_users(user_id)
+select id from auth.users where lower(email) = lower('TVUJ_EMAIL')
+on conflict do nothing;
+```
+
+3. Ověř přidělení role: `select user_id from public.admin_users;`. Pokud je tabulka prázdná, zkontroluj e-mail a existenci registrovaného účtu.
+4. Nasaď aktuální kód a znovu se přihlas nebo obnov stránku. V horní liště se objeví **Administrace**. Zde můžeš přidávat, upravovat a mazat položky. Náhled zadáváš jako HTTPS odkaz a stažení jako odkaz na Google Drive; aplikace soubory nenahrává.
+5. Smazání položky odstraní i její komentáře a hodnocení. Soubory na Google Drive zůstanou. Odebrání role: `delete from public.admin_users where user_id = 'UUID_UCTU';`.
+
+Role jsou uložené v chráněné tabulce. Uživatel si nemůže admin oprávnění přidělit přes registraci ani API. Zápisy do katalogu ověřují databázové RLS politiky při každé operaci. Bez migrace `admin.sql` zůstane katalog funkční, tlačítko administrace se neobjeví.
+
+`npm test` ověřuje migraci v lokálním PostgreSQL přes PGlite: admin zápisy, zákaz změn pro běžného uživatele, zákaz přidělení vlastní role, okamžité odebrání oprávnění a smazání souvisejících komentářů a hodnocení. Nepřipojuje se k produkční databázi.
 
 ## Netlify
 
@@ -35,7 +54,7 @@ Obsah katalogu spravuješ zatím v Supabase Table Editoru. Uživatelé nemají o
 
 Vytvoř dva testovací účty. První přidá hodnocení a komentář. Druhý je vidí, ale API musí odmítnout změnu cizího hodnocení i smazání cizího komentáře. Odhlášený klient nesmí přečíst `assets`. Tyto scénáře ověřují RLS, samotný frontend není bezpečnostní hranice.
 
-Hotový základ zatím neobsahuje administrační rozhraní, nahrávání, moderaci, obnovu zapomenutého hesla ani placené položky. Skutečné LUTy/presety a jejich licence musí dodat správce. Ukázkové fotografie načítá Unsplash a fonty Google Fonts.
+Hotový základ zatím neobsahuje nahrávání souborů, moderaci, obnovu zapomenutého hesla ani placené položky. Skutečné LUTy/presety a jejich licence musí dodat správce. Ukázkové fotografie načítá Unsplash a fonty Google Fonts.
 
 Dokumentace: [Supabase Auth](https://supabase.com/docs/guides/auth), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [Vite na Netlify](https://docs.netlify.com/build/frameworks/framework-setup-guides/vite/).
 # frame
