@@ -1,4 +1,4 @@
-# FRAME — LUTy a foto presety
+# Lucas Presets — LUTy a foto presety
 
 Anglická webová aplikace pro tvůrce z celého světa: Vite + React, statický frontend na Netlify, Supabase Auth a PostgreSQL. Soubory zůstávají na Google Drive. Bez konfigurace aplikace zobrazuje označenou ukázku se šesti položkami; registrace, hodnocení a stahování v ukázce nejsou aktivní.
 
@@ -59,4 +59,4 @@ Vytvoř dva testovací účty. První přidá hodnocení a komentář. Druhý je
 Hotový základ zatím neobsahuje nahrávání souborů, moderaci, obnovu zapomenutého hesla ani placené položky. Skutečné LUTy/presety a jejich licence musí dodat správce. Ukázkové fotografie načítá Unsplash a fonty Google Fonts.
 
 Dokumentace: [Supabase Auth](https://supabase.com/docs/guides/auth), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [Vite na Netlify](https://docs.netlify.com/build/frameworks/framework-setup-guides/vite/).
-# frame
+# Lucas Presets

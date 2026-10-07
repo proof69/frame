@@ -52,7 +52,7 @@ export default function Admin({ assets, onChange }) {
         <label className="wide">Description<textarea value={form.description} onChange={e => field('description', e.target.value)}/></label>
         <label className="wide">Preview image URL<input type="url" required placeholder="https://…" value={form.image_url} onChange={e => field('image_url', e.target.value)}/></label>
         <label className="wide">Google Drive download URL (optional)<input type="url" placeholder="https://drive.google.com/file/d/…/view" value={form.download_url} onChange={e => field('download_url', e.target.value)}/><span className="muted">Set the Drive file to anyone with the link.</span></label>
-        <label className="admin-check wide"><input type="checkbox" checked={form.featured} onChange={e => field('featured', e.target.checked)}/>FRAME pick</label>
+        <label className="admin-check wide"><input type="checkbox" checked={form.featured} onChange={e => field('featured', e.target.checked)}/>Lucas Presets pick</label>
       </div><div className="admin-actions"><button className="button small" type="submit">{busy ? 'Saving…' : 'Save item'}</button><button className="text-button" type="button" onClick={() => setEditing(null)}>Cancel</button></div>
     </fieldset></form>}
     {deleting && <div className="notice error" role="alert"><strong>Delete “{deleting.title}”?</strong><p>Its ratings and comments will also be deleted. The file on Google Drive will remain.</p><div className="admin-actions"><button className="button small danger" disabled={busy} onClick={remove}>{busy ? 'Deleting…' : 'Confirm deletion'}</button><button className="text-button" disabled={busy} onClick={() => setDeleting(null)}>Cancel</button></div></div>}
